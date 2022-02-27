@@ -1,22 +1,18 @@
-// ace editor configuration
-  
-  ace.config.setModuleUrl("ace/theme/xcode", "/ace-builds/src/theme-xcode.js");
-  ace.config.setModuleUrl("ace/theme/tomorrow", "/ace-builds/src/theme-tomorrow.js");
-  
-  ace.config.setModuleUrl("ace/mode/html", "/ace-builds/src/mode-html.js");
-  ace.config.setModuleUrl("ace/mode/css", "/ace-builds/src/mode-css.js");
-  ace.config.setModuleUrl("ace/mode/javascript", "/ace-builds/src/mode-javascript.js");
-  ace.config.setModuleUrl("ace/mode/text", "/ace-builds/src/mode-text.js");
-  
+let editor = "";
 
 let unlock = false;
   
 let path = "/sdcard";
   // All Directory & File list show
   
+  window.onload = function(){
+    document.getElementById('editor-container').style.height = (window.innerHeight-93) +'px'; 
+  	init();
+  }
+  
   function init(){
-  document.getElementById('editor-container').style.height = (window.innerHeight-93) +'px'
-  /*window.onresize = function(){
+  /*document.getElementById('editor-container').style.height = (window.innerHeight-93) +'px'
+  window.onresize = function(){
   document.getElementById('editor-container').style.height = (window.innerHeight-93) +'px'
   }*/
     var form = new FormData();
@@ -136,10 +132,11 @@ let path = "/sdcard";
     // PHP file open as text
     if(file3=='php'){
     img.src = "icons/php.svg";
-    div.setAttribute('ondblclick', "openFile(this, 'txt')");
+    div.setAttribute('ondblclick', "openFile(this, 'php')");
     menu.appendChild(div);
     }
     
+    /*
     // SVG file open as text
     if(file3=='svg'){
     img.src = "icons/svg.svg";
@@ -152,7 +149,7 @@ let path = "/sdcard";
     img.src = "icons/xml.svg";
     div.setAttribute('ondblclick', "openFile(this, 'txt')");
     menu.appendChild(div);
-    }
+    }*/
     
     // PDF file Open
     if(file3=='pdf'){
@@ -191,8 +188,8 @@ let path = "/sdcard";
     
     // GS file Open
     if(file3=='.gs'){
-    img.src = "icons/gs.svg";
-    div.setAttribute('ondblclick', "openFile(this, 'gs')");
+    img.src = "icons/js.svg";
+    div.setAttribute('ondblclick', "openFile(this, 'js')");
     menu.appendChild(div);
     }
     
@@ -344,10 +341,11 @@ let path = "/sdcard";
    // PHP file open as text
    if(file3=='php'){
    img.src = "icons/php.svg";
-   div.setAttribute('ondblclick', "openFile(this, 'txt')");
+   div.setAttribute('ondblclick', "openFile(this, 'php')");
    document.getElementById(path).appendChild(div);
    }
    
+   /*
    // SVG file open as text
    if(file3=='svg'){
    img.src = "icons/svg.svg";
@@ -360,7 +358,7 @@ let path = "/sdcard";
    img.src = "icons/xml.svg";
    div.setAttribute('ondblclick', "openFile(this, 'txt')");
    document.getElementById(path).appendChild(div);
-   }
+   }*/
    
    // PDF file Open
    if(file3=='pdf'){
@@ -395,6 +393,13 @@ let path = "/sdcard";
    img.src = "icons/js.svg";
    div.setAttribute('ondblclick', "openFile(this, 'js')");
    document.getElementById(path).appendChild(div);
+   }
+   
+   // GS file Open
+   if(file3=='.gs'){
+   img.src = "icons/js.svg";
+   div.setAttribute('ondblclick', "openFile(this, 'js')");
+   menu.appendChild(div);
    }
    
    }
@@ -482,7 +487,7 @@ let path = "/sdcard";
    //OpenMenu()
    }
    
-   if(type=="pdf"){
+   else if(type=="pdf"){
    let a = document.createElement('a');
    a.setAttribute('style', 'display:none');
    a.setAttribute('target', '_blank');
@@ -493,7 +498,7 @@ let path = "/sdcard";
    //OpenMenu()
    }
    
-   if(type=="txt" || type=="html" || type=="css" || type=="js"){
+   else{
    
    if(document.getElementById('openedFile')){
      document.getElementById('openedFile').removeAttribute('id');
@@ -513,63 +518,60 @@ let path = "/sdcard";
    
    })
    .then(res => res.text())
-   .then(text => {
+   .then( sourceCode => {
      unlock = true;
-     let editor = ace.edit("editor-container");
-     editor.session.setTabSize(2);
-     editor.session.setValue(text);
-     file_lock.src = "icons/lock.svg";
-     editor.session.on('change', function(delta) {
-       if(unlock) file_lock.src = "icons/lock-open.svg"; 
-       //else file_lock.src = "icons/lock.svg"; //unlock = true;
-     });
-     editor.setReadOnly(false)
-     document.getElementById("undo-btn").onclick = function(){editor.undo();}
-     document.getElementById("redo-btn").onclick = function(){editor.redo();}
+     
+     document.getElementById("undo-btn").onclick = function(){
+       editor.trigger('aaaa', 'undo', 'aaaa');
+       editor.focus();
+     }
+     document.getElementById("redo-btn").onclick = function(){
+       editor.trigger('aaaa', 'redo', 'aaaa');
+       editor.focus();
+     }
      document.getElementById("browsing").onclick = function(){document.getElementById("browsing").href = path.replace('/sdcard', '')}
      document.getElementById("save-btn").onclick = function(){
-        if(type != "txt"){
-           let form = new FormData();
-           form.append("path", path);
-           form.append("data", editor.getValue());
-           let url = "/editor/php/saved.php";
-           fetch(url,{
-           method: "POST",
-           mode: "no-cors",
-           header:{
-           'Content-Type': 'application/json'
-           },
-           body:  form
-           })
-           .then(res => res.text())
-           .then(text => {
-             if(text == "saved") file_lock.src = "icons/lock.svg";
-           }
-           ).catch( err => console.log(err));
-        }
+       let form = new FormData();
+       form.append("path", path);
+       form.append("data", editor.getValue());
+       let url = "/editor/php/saved.php";
+       fetch(url,{
+       method: "POST",
+       mode: "no-cors",
+       header:{
+       'Content-Type': 'application/json'
+       },
+       body:  form
+       })
+       .then(res => res.text())
+       .then(text => {
+         if(text == "saved") file_lock.src = "icons/lock.svg";
+       }
+       ).catch( err => console.log(err));
      }
+     
      file_name.value = path.slice((-1)*path.split('').reverse().join('').indexOf('/'));
-     if(type=="html"){
-       editor.setTheme("ace/theme/tomorrow");
-       editor.session.setMode("ace/mode/html");
-       file_icon.src = "icons/html.svg";
+     file_lock.src = "icons/lock.svg";
+     file_icon.src = "icons/"+ type +".svg";
+     
+     type = (type == "js") ? "javascript" : type;
+     
+     
+     if(typeof editor == "object"){
+       editor.dispose();
+       //console.log(editor)
      }
-     else if(type=="css"){
-       editor.setTheme("ace/theme/tomorrow");
-       editor.session.setMode("ace/mode/css");
-       file_icon.src = "icons/css.svg";
-     }
-     else if(type=="js"){
-       editor.setTheme("ace/theme/xcode");
-       editor.session.setMode("ace/mode/javascript");
-       file_icon.src = "icons/js.svg";
-     }
-     else{
-       editor.setReadOnly(true)
-       editor.setTheme("ace/theme/tomorrow");
-       editor.session.setMode("ace/mode/text");
-       file_icon.src = "icons/file-text.svg";
-     }
+     editor = monaco.editor.create(document.getElementById('editor-container'), {
+        value: sourceCode,
+        language: type,
+        fontSize: 17,
+        tabSize: 4,
+      });
+      
+      editor.onDidChangeModelContent(function(e){
+        if(unlock) file_lock.src = "icons/lock-open.svg";
+      })
+      
    }
    ).catch( err => console.log(err));
    OpenMenu()
@@ -577,8 +579,6 @@ let path = "/sdcard";
    }
    
    
-  //document.addEventListener("DOMContentLoaded", init);
-  init()
   window.onbeforeunload = function(){
     return 'Are you sure you want to leave?';
   };
@@ -588,7 +588,7 @@ let path = "/sdcard";
   window.addEventListener('keydown', key);
   
   function key(e){
-    if(e.ctrlKey){
+    if(e.ctrlKey && e.altKey){
       if(e.keyCode == 77){
         OpenMenu();
       }
