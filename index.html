@@ -1,53 +1,17 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Editor</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <link rel="icon" type="image/svg" href="icons/plus.svg">
-    <link rel="manifest" href="manifest.webmanifest">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-  </head>
-  
-  <body>
-  <div id="container">
-    <header>
-      <h1>Editor</h1>
-      <div onclick="OpenMenu(this)" id="menuBtn"><div></div><div></div><div></div></div>
-      <a target="_blank" href="terminal.html" ><img class="terminal" src="icons/terminal.svg"></a>
-      <div onclick="OpenMenu()" id="menuDiv"></div>
-      <div id="menu"></div>
-    </header>
-    <div class="file-info">
-    <img class="icon" id="file_icon" src="icons/html.svg">
-    <input id="file_name" onkeyup="console.log(window.event.keyCode)">
-    <div class="file">
-    <a target="_blank" id="browsing" href="#" ><img class="browser" src="icons/browser.svg"></a>
-    <!--img class="browser" src="icons/git.svg">
-    <img class="browser" src="icons/draft.svg"-->
-    <img class="browser" id="save-btn" style="height: 18px; margin-top: 4px" src="icons/save.svg">
-    <img class="browser" id="redo-btn" src="icons/redo.svg">
-    <img class="browser" id="undo-btn" src="icons/undo.svg">
-    <img class="browser" id="file_lock" src="icons/lock-open.svg">
-    </div>
-    </div>
-      <!--<div id="output">
-        <textarea id="textarea"></textarea>
-      </div>-->
-      <div id="editor-container"></div>
-    </div>
-   </div>
-  </div>
-  <!--script src="/ace-builds/src/ace.js" data-ace-base="src" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" src="/ace-builds/src/ext-language_tools.js"></script-->
-  <script src="/monaco-editor/lib/jquery-1.9.1.min.js"></script>
-  <script>
-    var require = { paths: { vs: '/monaco-editor/node_modules/monaco-editor/min/vs' } };
-  </script>
-  <script src="/node_modules/emmet-monaco-es/dist/emmet-monaco.min.js" type="text/javascript"></script>
-  <script src="/monaco-editor/node_modules/monaco-editor/min/vs/loader.js"></script>
-  <script src="/monaco-editor/node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-  <script src="/monaco-editor/node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
-  <script src="js/main.js" type="text/javascript"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/png" sizes="32x32" href="icon.png">
+		<link rel="stylesheet" href="css/main.css?v=1">
+		<title>ACE Editor</title>
+	</head>
+	<body>
+	   
+	</body>
+
+<script src="./js/ace.js" data-ace-base="src" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="./js/ext-language_tools.js"></script>
+<script type="text/javascript" src="./js/main.js?v=0.1"></script>
 </html>
