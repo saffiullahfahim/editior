@@ -6,7 +6,7 @@ let path = "/sdcard";
   // All Directory & File list show
   
   window.onload = function(){
-    document.getElementById('editor-container').style.height = (window.innerHeight-93) +'px'; 
+   // document.getElementById('editor-container').style.height = (window.innerHeight-93) +'px'; 
   	init();
   }
   
@@ -180,7 +180,7 @@ let path = "/sdcard";
     }
     
     // JS file Open
-    if(file3=='.js'){
+    if(file3=='.js' || file4 == "json"){
     img.src = "icons/js.svg";
     div.setAttribute('ondblclick', "openFile(this, 'js')");
     menu.appendChild(div);
@@ -352,7 +352,7 @@ let path = "/sdcard";
    div.setAttribute('ondblclick', "openFile(this, 'txt')");
    document.getElementById(path).appendChild(div);
    }
-   
+    
    // XML file open as text
    if(file3=='xml'){
    img.src = "icons/xml.svg";
@@ -389,7 +389,7 @@ let path = "/sdcard";
    }
    
    // JS file Open
-   if(file3=='.js'){
+   if(file3=='.js' || file4=="json"){
    img.src = "icons/js.svg";
    div.setAttribute('ondblclick', "openFile(this, 'js')");
    document.getElementById(path).appendChild(div);
@@ -446,7 +446,7 @@ let path = "/sdcard";
    function addNew(id, value, cmd){
    var form = new FormData();
    form.append("cmd[]", "cd '" + id.getAttribute('path').replace(/'/g,'"') +"'");
-   if(cmd=='folder'){
+     if(cmd=='folder'){
    form.append("cmd[]", "mkdir '" + value +"'");
    }
    else{
@@ -561,6 +561,8 @@ let path = "/sdcard";
        editor.dispose();
        //console.log(editor)
      }
+     
+     emmetMonaco.emmetHTML(monaco)
      editor = monaco.editor.create(document.getElementById('editor-container'), {
         value: sourceCode,
         language: type,
@@ -588,7 +590,21 @@ let path = "/sdcard";
   window.addEventListener('keydown', key);
   
   function key(e){
-    if(e.ctrlKey && e.altKey){
+    if(e.keyCode == 122){
+    
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        document.getElementById('editor-container').style.height = screen.height + "px"
+        
+      } 
+      else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+      
+    }
+    if(e.ctrlKey && e.shiftKey){
       if(e.keyCode == 77){
         OpenMenu();
       }
