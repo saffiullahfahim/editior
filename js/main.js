@@ -43,7 +43,12 @@ if(GetURLParameter('html')){
 	let div = document.createElement("div");
 	let editor = 'html';
 	let editorName = "HTML";
-	path = `'/sdcard/${GetURLParameter('html')}'`;
+	if(GetURLParameter('html')[0] == "~"){
+	  path = GetURLParameter('html');
+	}
+	else {
+	  path = `'/sdcard/${GetURLParameter('html')}'`;
+	}
 	div.innerHTML = eval("`" + container + "`");
 	document.body.appendChild(div);
 	
@@ -56,11 +61,14 @@ if(GetURLParameter('html')){
 	  enableSnippets: true,
 	  enableLiveAutocompletion: true,
 	  readOnly: true
-	});
-	fetch("/" + GetURLParameter('html')).then(res => res.text())
+	})
+	
+	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
+	fetch("php/content.php?path=" + path).then(res => res.text())
 	.then(text => {
 	  html.session.setValue(text);
 	  html.setReadOnly(false);
+	  console.log(text);
 	})
 }
 
@@ -68,7 +76,12 @@ if(GetURLParameter('css')){
 	let div = document.createElement("div");
 	let editor = 'css';
 	let editorName = "CSS";
-	path = `'/sdcard/${GetURLParameter('css')}'`;
+	if(GetURLParameter('css')[0] == "~"){
+	  path = GetURLParameter('css');
+	}
+	else {
+	  path = `'/sdcard/${GetURLParameter('css')}'`;
+	}
 	div.innerHTML = eval("`" + container + "`");
 	document.body.appendChild(div);
 	
@@ -82,7 +95,9 @@ if(GetURLParameter('css')){
 	  enableLiveAutocompletion: true,
 	  readOnly: true
 	});
-	fetch("../" + GetURLParameter('css')).then(res => res.text())
+	
+	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
+	fetch("php/content.php?path=" + path).then(res => res.text())
 	.then(text => {
 	  css.session.setValue(text);
 	  css.setReadOnly(false);
@@ -93,7 +108,12 @@ if(GetURLParameter('js')){
 	let div = document.createElement("div");
 	let editor = 'js';
 	let editorName = "JavaScript";
-	path = `'/sdcard/${GetURLParameter('js')}'`;
+	if(GetURLParameter('js')[0] == "~"){
+	  path = GetURLParameter('js');
+	}
+	else {
+	  path = `'/sdcard/${GetURLParameter('js')}'`;
+	}
 	div.innerHTML = eval("`" + container + "`");
 	document.body.appendChild(div);
 	
@@ -107,7 +127,9 @@ if(GetURLParameter('js')){
 	  enableLiveAutocompletion: true,
 	  readOnly: true
 	});
-	fetch("../" + GetURLParameter('js')).then(res => res.text())
+	
+	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
+	fetch("php/content.php?path=" + path).then(res => res.text())
 	.then(text => {
 	  js.session.setValue(text);
 	  js.setReadOnly(false);
@@ -118,7 +140,12 @@ if(GetURLParameter('php')){
 	let div = document.createElement("div");
 	let editor = 'php';
 	let editorName = "PHP";
-	path = `'/sdcard/${GetURLParameter('php')}'`;
+	if(GetURLParameter('php')[0] == "~"){
+	  path = GetURLParameter('php');
+	}
+	else {
+	  path = `'/sdcard/${GetURLParameter('php')}'`;
+	}
 	div.innerHTML = eval("`" + container + "`");
 	document.body.appendChild(div);
 	
@@ -132,7 +159,9 @@ if(GetURLParameter('php')){
 	  enableLiveAutocompletion: true,
 	  readOnly: true
 	});
-	fetch("php/content.php?path=/sdcard/" + GetURLParameter('php')).then(res => res.text())
+	
+	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
+	fetch("php/content.php?path=" + path).then(res => res.text())
 	.then(text => {
 	  php.session.setValue(text);
 	  php.setReadOnly(false);
@@ -193,4 +222,14 @@ function changeCursor(type, editor){
     //editor.clearSelection();
   }
   editor.focus();
+}
+
+let input = document.createElement('input');
+//input.value = "123";
+input.setAttribute("style", "width: 1px; height: 1px; margin: -190000px;");
+document.body.appendChild(input);
+input.focus();
+//input.value = "1237";
+window.onbeforeunload = function () {
+  return 'Are you really want to perform the action?';
 }
