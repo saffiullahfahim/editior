@@ -1,9 +1,16 @@
 <?php
 
   if($_POST){
-      $file = fopen($_POST["path"], 'w');
-      fwrite($file, $_POST["data"]);
-      fclose($file);
+      if($_POST["path"][0] == "~"){
+        $file = fopen("/data/data/com.termux/files/home" . substr($_POST["path"], 1), 'w');
+        fwrite($file, $_POST["data"]);
+        fclose($file);
+      }
+	  else{
+	    $file = fopen($_POST["path"], 'w');
+	    fwrite($file, $_POST["data"]);
+	    fclose($file);
+	  }
       echo "success";
   }
   else{

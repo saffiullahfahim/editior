@@ -1,15 +1,20 @@
 function GetURLParameter(parameter){
-  let data = '';
+  let data = [];
   let url = window.location.toString();
   
   if(url.indexOf('?') >= 0){
 	url = url.substr(url.indexOf('\?'))
 	let searchParams = new URLSearchParams(url);
 	if(searchParams.has(parameter)){
-	  data = searchParams.get(parameter);
+	  data = searchParams.getAll(parameter);
 	}
   }
   return data;
+}
+
+function GetFileName(path){
+  path = path.split(""). reverse().join("");
+  return path.substr(0, path.indexOf("/")).split("").reverse().join("");
 }
 
 ace.config.setModuleUrl("ace/theme/xcode", "./js/theme-xcode.js");
@@ -17,19 +22,15 @@ ace.config.setModuleUrl("ace/theme/tomorrow", "./js/theme-tomorrow.js");
 ace.config.setModuleUrl("ace/mode/html", "./js/mode-html.js");
 ace.config.setModuleUrl("ace/mode/css", "./js/mode-css.js");
 ace.config.setModuleUrl("ace/mode/javascript", "./js/mode-javascript.js");
+ace.config.setModuleUrl("ace/mode/jsx", "./js/mode-jsx.js");
 ace.config.setModuleUrl("ace/mode/php", "./js/mode-php.js");
-/*ace.config.setModuleUrl("ace/worker/html", "./js/worker-html.js");
-ace.config.setModuleUrl("ace/worker/css", "./js/worker-css.js");
-ace.config.setModuleUrl("ace/worker/javascript", "./js/worker-javascript.js");
-ace.config.setModuleUrl("ace/worker/php", "./js/worker-php.js");
-*/
 
 let container = '<div class="discrebtion">' + 
 		   '<div class="title">'+
 			   '<div>${editorName}</div>'+
 			  ' <div class="button-div">'+
 				   '<button onclick="undo(${editor})" class="button">undo</button>'+
-				   '<button onclick="redo(${editor})" class="button">redo</button>'+
+				   '<button onclick="redo(${editor}\)" class="button">redo</button>'+
 				   '<button onclick="changeCursor(' + "'previous'," + '${editor})" style="padding-left: 10px; padding-right: 10px;" class="button">&#8676;</button>'+
 				   '<button onclick="changeCursor(' + "'next'," + '${editor})" style="padding-left: 10px; padding-right: 10px;" class="button">&#8677;</button>'+
 				   '<button onclick="save(${path}, this, ${editor})" class="button">save</button>'+
@@ -38,134 +39,66 @@ let container = '<div class="discrebtion">' +
 		   '<div class="editor" id="${editor}-div">loading...</div>'+
 	   '</div>';
 
-let html, css, js, php;
-if(GetURLParameter('html')){
-	let div = document.createElement("div");
-	let editor = 'html';
-	let editorName = "HTML";
-	if(GetURLParameter('html')[0] == "~"){
-	  path = GetURLParameter('html');
-	}
-	else {
-	  path = `'/sdcard/${GetURLParameter('html')}'`;
-	}
-	div.innerHTML = eval("`" + container + "`");
-	document.body.appendChild(div);
-	
-	html = ace.edit("html-div");
-	html.setTheme("ace/theme/tommorow");
-	html.session.setMode("ace/mode/html")
-	html.session.setTabSize(2);
-	html.setOptions({
-	  enableBasicAutocompletion: true,
-	  enableSnippets: true,
-	  enableLiveAutocompletion: true,
-	  readOnly: true
-	})
-	
-	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
-	fetch("php/content.php?path=" + path).then(res => res.text())
-	.then(text => {
-	  html.session.setValue(text);
-	  html.setReadOnly(false);
-	  console.log(text);
-	})
+let html, css, js, jsx, php;
+const Editor = {
+  "html": {
+    mode: "html",
+    theme: "tommorow"
+  },
+  "css": {
+    mode: "css",
+    theme: "tommorow"
+  },
+  "js":{
+    mode: "javascript",
+    theme: "xcode"
+  },
+  "jsx":{
+    mode: "jsx",
+    theme: "xcode"
+  },
+  "php": {
+    mode: "php",
+    theme: "xcode"
+  }
 }
 
-if(GetURLParameter('css')){
-	let div = document.createElement("div");
-	let editor = 'css';
-	let editorName = "CSS";
-	if(GetURLParameter('css')[0] == "~"){
-	  path = GetURLParameter('css');
-	}
-	else {
-	  path = `'/sdcard/${GetURLParameter('css')}'`;
-	}
-	div.innerHTML = eval("`" + container + "`");
-	document.body.appendChild(div);
-	
-	css = ace.edit("css-div");
-	css.setTheme("ace/theme/tommorow");
-	css.session.setMode("ace/mode/css")
-	css.session.setTabSize(2);
-	css.setOptions({
-	  enableBasicAutocompletion: true,
-	  enableSnippets: true,
-	  enableLiveAutocompletion: true,
-	  readOnly: true
-	});
-	
-	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
-	fetch("php/content.php?path=" + path).then(res => res.text())
-	.then(text => {
-	  css.session.setValue(text);
-	  css.setReadOnly(false);
-	})
-}
-
-if(GetURLParameter('js')){
-	let div = document.createElement("div");
-	let editor = 'js';
-	let editorName = "JavaScript";
-	if(GetURLParameter('js')[0] == "~"){
-	  path = GetURLParameter('js');
-	}
-	else {
-	  path = `'/sdcard/${GetURLParameter('js')}'`;
-	}
-	div.innerHTML = eval("`" + container + "`");
-	document.body.appendChild(div);
-	
-	js = ace.edit("js-div");
-	js.setTheme("ace/theme/xcode");
-	js.session.setMode("ace/mode/javascript")
-	js.session.setTabSize(2);
-	js.setOptions({
-	  enableBasicAutocompletion: true,
-	  enableSnippets: true,
-	  enableLiveAutocompletion: true,
-	  readOnly: true
-	});
-	
-	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
-	fetch("php/content.php?path=" + path).then(res => res.text())
-	.then(text => {
-	  js.session.setValue(text);
-	  js.setReadOnly(false);
-	})
-}
-
-if(GetURLParameter('php')){
-	let div = document.createElement("div");
-	let editor = 'php';
-	let editorName = "PHP";
-	if(GetURLParameter('php')[0] == "~"){
-	  path = GetURLParameter('php');
-	}
-	else {
-	  path = `'/sdcard/${GetURLParameter('php')}'`;
-	}
-	div.innerHTML = eval("`" + container + "`");
-	document.body.appendChild(div);
-	
-	php = ace.edit("php-div");
-	php.setTheme("ace/theme/xcode");
-	php.session.setMode("ace/mode/php")
-	php.session.setTabSize(2);
-	php.setOptions({
-	  enableBasicAutocompletion: true,
-	  enableSnippets: true,
-	  enableLiveAutocompletion: true,
-	  readOnly: true
-	});
-	
-	path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
-	fetch("php/content.php?path=" + path).then(res => res.text())
-	.then(text => {
-	  php.session.setValue(text);
-	  php.setReadOnly(false);
-	})
+for(let x in Editor){
+  let parameters = GetURLParameter(x);
+  for(let i = 0; i < parameters.length; i++){
+    let path;
+    if(parameters[i][0] == "~"){
+	    path = "'"+ parameters[i] + "'";
+	  }
+	  else {
+	    path = `'/sdcard/${parameters[i]}'`;
+	  }
+    let div = document.createElement("div");
+    let editorName = GetFileName(parameters[i]) ? GetFileName(parameters[i]) : x.toUpperCase();
+    let editor = x + i;
+    div.innerHTML = eval("`" + container + "`");
+	  document.body.appendChild(div);
+	  eval(`
+	    ${x + i} = ace.edit("${x + i}-div");
+	    ${x + i}.setTheme("ace/theme/${Editor[x].theme}");
+	    ${x + i}.session.setMode("ace/mode/${Editor[x].mode}")
+	    ${x + i}.session.setTabSize(2);
+	    ${x + i}.setOptions({
+	      enableBasicAutocompletion: true,
+	      enableSnippets: true,
+	      enableLiveAutocompletion: true,
+	      readOnly: true
+	    })
+	    
+	    path = path[0].replace("'", "") + path.substr(1, path.length - 2) + path[path.length - 1].replace("'","");
+	    fetch("php/content.php?path=" + path).then(res => res.text())
+	    .then(text => {
+	      ${x + i}.session.setValue(text);
+	      ${x + i}.setReadOnly(false);
+	      console.log(text);
+	    })
+	  `);
+  }
 }
 
 function undo(editor){
